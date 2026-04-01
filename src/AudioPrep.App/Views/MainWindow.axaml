@@ -1,0 +1,205 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:AudioPrep.App.ViewModels"
+        xmlns:models="clr-namespace:AudioPrep.Core.Models;assembly=AudioPrep.Core"
+        xmlns:loc="clr-namespace:AudioPrep.App.Localization"
+        x:Class="AudioPrep.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="AudioPrep"
+        Width="980"
+        Height="780"
+        MinWidth="860"
+        MinHeight="620"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="20" Spacing="14">
+      <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10" RowDefinitions="Auto">
+        <StackPanel Grid.Column="0" Spacing="4">
+          <TextBlock Text="{Binding L.AppTitle}" FontSize="30" FontWeight="SemiBold" />
+          <TextBlock Text="{Binding L.Subtitle}" FontSize="14" Opacity="0.8" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center" Margin="0,18,0,0">
+          <TextBlock Text="{Binding L.LanguageLabel}" FontSize="12" Opacity="0.8" />
+          <ComboBox Width="180"
+                    ItemsSource="{Binding LanguageOptions}"
+                    SelectedItem="{Binding SelectedLanguage}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="loc:LanguageOption">
+                <TextBlock Text="{Binding DisplayName}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+
+        <Button Grid.Column="2"
+                Margin="0,34,0,0"
+                Content="{Binding ModeToggleText}"
+                Command="{Binding ToggleModeCommand}" />
+      </Grid>
+
+      <Border Classes="drop-zone"
+              BorderBrush="{DynamicResource ThemeBorderMidBrush}"
+              Background="{DynamicResource ThemeControlLowBrush}"
+              DragDrop.AllowDrop="True"
+              DragDrop.DragOver="DropZone_DragOver"
+              DragDrop.Drop="DropZone_Drop">
+        <StackPanel HorizontalAlignment="Center" Spacing="8">
+          <TextBlock Text="{Binding L.DropZoneText}"
+                     FontSize="20"
+                     FontWeight="SemiBold"
+                     HorizontalAlignment="Center" />
+          <Button Content="{Binding L.BrowseFilesButton}"
+                  HorizontalAlignment="Center"
+                  Command="{Binding BrowseFileCommand}" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card"
+              BorderBrush="{DynamicResource ThemeBorderMidBrush}"
+              IsVisible="{Binding IsSimpleMode}">
+        <StackPanel Spacing="4">
+          <TextBlock Text="{Binding L.SimpleModeTitle}" FontSize="16" FontWeight="SemiBold" />
+          <TextBlock Text="{Binding L.SimpleModeDescription}" Opacity="0.8" TextWrapping="Wrap" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card"
+              BorderBrush="{DynamicResource ThemeBorderMidBrush}"
+              IsVisible="{Binding HasMediaLoaded}">
+        <StackPanel Spacing="8">
+          <TextBlock Text="{Binding L.FileSummaryTitle}" FontSize="16" FontWeight="SemiBold" />
+          <Grid ColumnDefinitions="180,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="6">
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding L.FileNameLabel}" FontWeight="SemiBold" />
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding FileName}" />
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding L.PathLabel}" FontWeight="SemiBold" />
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding InputPath}" TextWrapping="Wrap" />
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding L.DurationLabel}" FontWeight="SemiBold" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding DurationText}" />
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding L.ContainerLabel}" FontWeight="SemiBold" />
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding ContainerFormat}" />
+
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding L.AudioStreamsLabel}" FontWeight="SemiBold" />
+            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding AudioStreamCountText}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card"
+              BorderBrush="{DynamicResource ThemeBorderMidBrush}"
+              IsVisible="{Binding ShouldShowStreamSelector}">
+        <StackPanel Spacing="8">
+          <TextBlock Text="{Binding L.AudioStreamSectionTitle}" FontSize="16" FontWeight="SemiBold" />
+          <ComboBox ItemsSource="{Binding AudioStreams}" SelectedItem="{Binding SelectedAudioStream}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="models:AudioStreamInfo">
+                <TextBlock Text="{Binding DisplayName}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card" BorderBrush="{DynamicResource ThemeBorderMidBrush}">
+        <StackPanel Spacing="10">
+          <TextBlock Text="{Binding L.OutputTitle}" FontSize="16" FontWeight="SemiBold" />
+
+          <StackPanel IsVisible="{Binding IsSimpleMode}" Spacing="8">
+            <Grid ColumnDefinitions="180,*">
+              <TextBlock Grid.Column="0" Text="{Binding L.SimpleModeOutputLabel}" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="{Binding L.SimpleModeOutputValue}" VerticalAlignment="Center" />
+            </Grid>
+
+            <Grid ColumnDefinitions="180,*,Auto" ColumnSpacing="8">
+              <TextBlock Grid.Column="0" Text="{Binding L.OutputFolderLabel}" VerticalAlignment="Center" />
+              <TextBox Grid.Column="1" Text="{Binding OutputDirectory}" />
+              <Button Grid.Column="2"
+                      Content="{Binding L.BrowseFolderButton}"
+                      Command="{Binding BrowseOutputFolderCommand}" />
+            </Grid>
+          </StackPanel>
+
+          <Grid IsVisible="{Binding IsAdvancedMode}"
+                ColumnDefinitions="180,*"
+                RowDefinitions="Auto,Auto,Auto"
+                RowSpacing="8">
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding L.PresetLabel}" VerticalAlignment="Center" />
+            <ComboBox Grid.Row="0"
+                      Grid.Column="1"
+                      ItemsSource="{Binding Presets}"
+                      SelectedItem="{Binding SelectedPreset}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="models:OutputPreset">
+                  <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding L.OutputFolderLabel}" VerticalAlignment="Center" />
+            <Grid Grid.Row="1" Grid.Column="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+              <TextBox Grid.Column="0" Text="{Binding OutputDirectory}" />
+              <Button Grid.Column="1"
+                      Content="{Binding L.BrowseFolderButton}"
+                      Command="{Binding BrowseOutputFolderCommand}" />
+            </Grid>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding L.OutputFileNameLabel}" VerticalAlignment="Center" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding OutputFileName}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="card"
+              BorderBrush="{DynamicResource ThemeBorderMidBrush}"
+              IsVisible="{Binding IsAdvancedMode}">
+        <StackPanel Spacing="10">
+          <TextBlock Text="{Binding L.ProcessingOptionsTitle}" FontSize="16" FontWeight="SemiBold" />
+
+          <StackPanel Orientation="Horizontal" Spacing="16">
+            <CheckBox Content="{Binding L.NormalizeLoudnessLabel}" IsChecked="{Binding NormalizeLoudness}" />
+            <CheckBox Content="{Binding L.TrimSilenceLabel}" IsChecked="{Binding TrimSilence}" />
+            <CheckBox Content="{Binding L.DownmixToMonoLabel}" IsChecked="{Binding DownmixToMono}" />
+          </StackPanel>
+
+          <Grid ColumnDefinitions="180,*" RowDefinitions="Auto">
+            <TextBlock Grid.Column="0" Text="{Binding L.SampleRateLabel}" VerticalAlignment="Center" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding SampleRates}" SelectedItem="{Binding TargetSampleRate}" />
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <StackPanel Orientation="Horizontal" Spacing="8">
+        <Button Content="{Binding ProcessButtonText}" Command="{Binding ProcessCommand}" />
+        <Button Content="{Binding L.CancelButton}" Command="{Binding CancelCommand}" />
+        <Button Content="{Binding L.OpenOutputFolderButton}" Command="{Binding OpenOutputFolderCommand}" />
+        <Button IsVisible="{Binding IsAdvancedMode}"
+                Content="{Binding LogToggleText}"
+                Command="{Binding ToggleLogsCommand}" />
+      </StackPanel>
+
+      <Border Classes="card" BorderBrush="{DynamicResource ThemeBorderMidBrush}">
+        <StackPanel Spacing="8">
+          <ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress}" Height="16" />
+          <TextBlock Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+
+          <Expander IsVisible="{Binding IsAdvancedMode}"
+                    Header="{Binding L.ProcessLogsHeader}"
+                    IsExpanded="{Binding ShowLogs}">
+            <TextBox Text="{Binding LogText}"
+                     AcceptsReturn="True"
+                     IsReadOnly="True"
+                     FontFamily="Consolas"
+                     Height="180"
+                     TextWrapping="Wrap" />
+          </Expander>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</Window>

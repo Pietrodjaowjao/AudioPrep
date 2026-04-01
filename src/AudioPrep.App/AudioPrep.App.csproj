@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\AudioPrep.Core\AudioPrep.Core.csproj" />
+    <ProjectReference Include="..\AudioPrep.Infrastructure\AudioPrep.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.13" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.13" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.13" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="tools\ffmpeg\win-x64\ffmpeg.exe;tools\ffmpeg\win-x64\ffprobe.exe;tools\ffmpeg\win-x64\README.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="EnsureBundledFfmpeg"
+          BeforeTargets="BeforeBuild"
+          Condition="'$(OS)' == 'Windows_NT' and '$(SkipFfmpegBootstrap)' != 'true'">
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\scripts\Ensure-BundledFfmpeg.ps1&quot; -DestinationDir &quot;$(MSBuildProjectDirectory)\tools\ffmpeg\win-x64&quot;" />
+  </Target>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <IsAotCompatible>true</IsAotCompatible>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <SkipFfmpegBootstrap>false</SkipFfmpegBootstrap>
+  </PropertyGroup>
+
+</Project>

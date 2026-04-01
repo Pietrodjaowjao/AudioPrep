@@ -1,0 +1,21 @@
+# Build outputs
+bin/
+obj/
+
+# User and IDE files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userprefs
+
+# Test artifacts
+TestResults/
+coverage/
+
+# Auto-downloaded FFmpeg binaries
+src/AudioPrep.App/tools/ffmpeg/win-x64/*.exe
+
+# OS files
+.DS_Store
+Thumbs.db
